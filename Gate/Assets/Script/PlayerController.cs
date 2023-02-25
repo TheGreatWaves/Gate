@@ -13,15 +13,15 @@ public class PlayerController : MonoBehaviour
     
     private Animator _animator;
 
-    [SerializeField] private float _runSpeed = 2.0f;
     [SerializeField] private float _jumpSpeed = 8.0f;
     private bool _isJumpCut;
     public float GravityScale = 2.0f;
     public float FastFallGravityMult = 3.0f;
     public float FallGravityMult = 2.5f;
     public float JumpCutGravityMult = 2.5f;
-    public float MaxFastFallSpeed = 10.0f;
-    public float MaxFallSpeed = 7.0f;
+
+    public float MaxFastFallSpeed = 18.0f;
+    public float MaxFallSpeed = 14.0f;
 
     public float JumpHangGravityMult = 0.5f;
     public float JumpHangTimeThreshold = 0.1f;
@@ -30,6 +30,12 @@ public class PlayerController : MonoBehaviour
 
     public bool IsJumping { get; private set; }
 
+    [SerializeField] private Transform _gunPoint;
+    [SerializeField] private GameObject _bulletTrail;
+
+    // Flag for carry velocity
+    public Vector2 CarryVelocity { get; set; } 
+    public bool UseCarryVelocity;
 
     // Start is called before the first frame update
     void Start()
@@ -38,15 +44,20 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
         _groundMask = LayerMask.GetMask("Ground");
+        UseCarryVelocity = false;
     }
 
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (UseCarryVelocity)
+        {
+            CalculateGravity();
+            return;
+        }
         // For debugging
         _movement = _rb.velocity;
-        JumpCheck();
 
         Run();
         FlipSprite();
@@ -103,7 +114,16 @@ public class PlayerController : MonoBehaviour
         }
         else if (_rb.velocity.y < 0)
         {
-            SetGravityScale(GravityScale * FallGravityMult);
+            if (UseCarryVelocity)
+            {
+                _animator.SetBool("isRunning", false);
+                SetGravityScale(GravityScale * 0.5f);
+            }
+            else 
+            {
+                SetGravityScale(GravityScale * FallGravityMult);
+            }
+            
             _rb.velocity = new Vector2(_rb.velocity.x, Mathf.Max(_rb.velocity.y, -MaxFallSpeed));
         }
         else
@@ -112,29 +132,28 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void JumpCheck()
-    {
-        // // Cast a ray straight down.
-        // RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, _capsuleCollider.bounds.extents.y + 0.2f, _groundMask);// If it hits something...
-        // if (hit.collider != null)
-        // {
-        //     if (_rb.velocity.y <= 0f)
-        //     {
-        //         IsJumping = false;
-        //         _isJumpCut = false;
-        //     }
-        // }
-        // else 
-        // {
-        //     IsJumping = true;
-        // }
-    }
 
+    // Grounded
     void OnTriggerEnter2D(Collider2D other)
     {
-        _animator.SetBool("isJumping", false);
-        IsJumping = false;
-        _isJumpCut = false;
+        if (other.CompareTag("Portal"))
+        {
+            CarryVelocity = _rb.velocity;
+        }
+        else 
+        {
+            // UseCarryVelocity = false;
+            _animator.SetBool("isJumping", false);
+            IsJumping = false;
+            _isJumpCut = false;
+        }
+
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        _animator.SetBool("isJumping", true);
+        IsJumping = true;
     }
 
 
@@ -159,11 +178,13 @@ public class PlayerController : MonoBehaviour
     
     void OnMove(InputValue value)
     {
+        UseCarryVelocity = false;
         _moveInput = value.Get<Vector2>();
     }
 
     void OnJump(InputValue value)
     {
+        UseCarryVelocity = false;
         if (value.isPressed)
         {
             Jump();
@@ -172,10 +193,42 @@ public class PlayerController : MonoBehaviour
     
     void OnJumpReleased(InputValue value)
     {
+        UseCarryVelocity = false;
         if (CanJumpCut())
         {
             _isJumpCut = true;
         }
     }
-    #endregion
+
+    void OnFire(InputValue value)
+    {
+        // Calculate the target position in world coordinates
+        Vector2 targetScreenPosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        Vector2 targetWorldPosition = targetScreenPosition - (Vector2)_gunPoint.position;
+
+        // Calculate the direction vector for the ray
+        Vector2 rayDirection = targetWorldPosition.normalized;
+
+        // Extend the ray offscreen by scaling the direction vector
+        rayDirection *= 1000f;
+
+        // Cast the ray and get the hit information
+        RaycastHit2D hit = Physics2D.Raycast(_gunPoint.position, rayDirection, Mathf.Infinity, _groundMask);
+
+        // Instantiate the bullet trail
+        GameObject trail = Instantiate(_bulletTrail, _gunPoint.position, Quaternion.identity);
+        BulletTrail trailScript = trail.GetComponent<BulletTrail>();
+
+        // Set the target position for the bullet trail
+        if (hit.collider != null)
+        {
+            trailScript.SetTargetPosition(hit.point);
+        }
+        else
+        {
+            trailScript.SetTargetPosition((Vector2)_gunPoint.position + rayDirection);
+        }
+    }
+
+    #endregion    
 }
