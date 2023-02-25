@@ -76,6 +76,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!IsJumping)
         {
+            _animator.SetBool("isJumping", true);
             IsJumping = true;
             _rb.velocity = new Vector2(_rb.velocity.x, _jumpSpeed);
         }
@@ -113,20 +114,27 @@ public class PlayerController : MonoBehaviour
 
     void JumpCheck()
     {
-        // Cast a ray straight down.
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, _capsuleCollider.bounds.extents.y + 0.2f, _groundMask);// If it hits something...
-        if (hit.collider != null)
-        {
-            if (_rb.velocity.y <= 0f)
-            {
-                IsJumping = false;
-                _isJumpCut = false;
-            }
-        }
-        else 
-        {
-            IsJumping = true;
-        }
+        // // Cast a ray straight down.
+        // RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, _capsuleCollider.bounds.extents.y + 0.2f, _groundMask);// If it hits something...
+        // if (hit.collider != null)
+        // {
+        //     if (_rb.velocity.y <= 0f)
+        //     {
+        //         IsJumping = false;
+        //         _isJumpCut = false;
+        //     }
+        // }
+        // else 
+        // {
+        //     IsJumping = true;
+        // }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        _animator.SetBool("isJumping", false);
+        IsJumping = false;
+        _isJumpCut = false;
     }
 
 
