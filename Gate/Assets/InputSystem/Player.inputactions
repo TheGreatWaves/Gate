@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "JumpReleased",
+                    "type": "Button",
+                    "id": "e3c25d99-490b-49a2-81d2-08c9ffc8b3e8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -267,10 +276,21 @@
                     "name": "",
                     "id": "f49dc84b-e09f-4721-8138-327f9f6df127",
                     "path": "<Keyboard>/space",
-                    "interactions": "",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "926d0099-40b3-450d-ae90-463f6e8b331b",
+                    "path": "<Keyboard>/space",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "JumpReleased",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
