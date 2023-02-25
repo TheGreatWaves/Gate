@@ -14,11 +14,11 @@ public static class VectorsExtension
     public static Vector2 RotateVector2(this Vector2 velocity, float degrees)
     {
         float radians = degrees * Mathf.Deg2Rad;
-        float cos = Mathf.Cos(radians);
-        float sin = Mathf.Sin(radians);
-        float x = velocity.x * cos - velocity.y * sin;
-        float y = velocity.x * sin + velocity.y * cos;
-        return new Vector2(x, y);
+        Vector2 rotatedVector = new Vector2();
+        rotatedVector.x = -(velocity.x * Mathf.Cos(radians) - velocity.y * Mathf.Sin(radians));
+        rotatedVector.y = -(velocity.x * Mathf.Sin(radians) + velocity.y * Mathf.Cos(radians));
+        
+        return rotatedVector;
     }
 }
 

@@ -51,13 +51,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        // For debugging
+        _movement = _rb.velocity;
         if (UseCarryVelocity)
         {
             CalculateGravity();
             return;
         }
-        // For debugging
-        _movement = _rb.velocity;
+
 
         Run();
         FlipSprite();
@@ -117,7 +118,17 @@ public class PlayerController : MonoBehaviour
             if (UseCarryVelocity)
             {
                 _animator.SetBool("isRunning", false);
-                SetGravityScale(GravityScale * 0.5f);
+
+                // If we have movement on the x-axis for our carry 
+                // velocity, we lessen the gravity for a further launch
+                if (CarryVelocity.x > 0) 
+                {
+                    SetGravityScale(GravityScale * 0.5f);
+                }
+                else 
+                {
+                    SetGravityScale(GravityScale * FallGravityMult);
+                }
             }
             else 
             {
@@ -142,7 +153,7 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            // UseCarryVelocity = false;
+            UseCarryVelocity = false;
             _animator.SetBool("isJumping", false);
             IsJumping = false;
             _isJumpCut = false;
