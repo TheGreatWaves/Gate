@@ -19,11 +19,15 @@ public class PortalGun : MonoBehaviour
     private bool _connected = false;
     public static PortalGun instance;
 
+
     void Awake()
     {
         if (instance == null)
         {
             instance = this;
+            _orangePortal = Instantiate(_orangePortalPrefab, new Vector3(0,0,-100), Quaternion.identity);
+            _bluePortal = Instantiate( _bluePortalPrefab, new Vector3(0,0,-100), Quaternion.identity);
+            TryConnect();
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -31,74 +35,59 @@ public class PortalGun : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    private void PlacePortal(ref GameObject portal, GameObject portalPrefab, Vector3 location, Quaternion rotation)
+    
+    private void PlacePortal(ref GameObject portal, GameObject portalPrefab, Vector3 location, Quaternion rotation, bool tryOnce = false, bool locationOverride = false)
     {
+        bool existingPortal = portal != null;
+        // Take snapshot for fall back
+        var positionSnapshot = portal ? portal.transform.position : new Vector3(0,0,-1);
+        var rotationSnapshot = portal ? portal.transform.rotation : new Quaternion(-1,-1,-1,-1);
+
         Grid grid = FindObjectOfType<Grid>();
         Vector3Int cellPosition = grid.WorldToCell(location);
         Vector3 snappedPosition = grid.CellToWorld(cellPosition);
         snappedPosition = snappedPosition.WithAxis(Axis.X, (rotation.eulerAngles.z == 45 ? snappedPosition.x + 1.125f : snappedPosition.x));
         snappedPosition = snappedPosition.WithAxis(Axis.X, (rotation.eulerAngles.z == 135 ? snappedPosition.x - 0.125f : snappedPosition.x));
 
-        // Check if there is already a portal at the new location
-        if ((_bluePortal != null && _bluePortal.transform.position == snappedPosition) || (_orangePortal != null && _orangePortal.transform.position == snappedPosition))
+        if ((_bluePortal.transform.position == snappedPosition) 
+        || (_orangePortal.transform.position == snappedPosition))
         {
             // There is already a portal at the new location, do not create a new portal
             return;
         }
 
-        if (portal != null)
-        {
-            portal.transform.position = snappedPosition;
-            portal.transform.rotation = rotation;
+        // if (locationOverride) Debug.Log("LOCATION OVERRIDE");
+        portal.transform.position = snappedPosition;
+        portal.transform.rotation = rotation;
 
-            if (_bluePortalScript) _bluePortalScript.CalculateDirection();
-            if (_orangePortalScript) _orangePortalScript.CalculateDirection();
-        }
-        else 
-        {
-            portal = Instantiate(portalPrefab, snappedPosition, rotation);
-            TryConnect();
-        }
+        if (_bluePortalScript) _bluePortalScript.CalculateDirection();
+        if (_orangePortalScript) _orangePortalScript.CalculateDirection();
 
         var portalScript = portal.GetComponent<Portal>();
-        if (!portalScript.CheckPortalGrounded())
+        if (!tryOnce && !portalScript.ValidPlacement(Vector2.zero))
         {
-            var angle = (int)rotation.eulerAngles.z;
+            // Attempt to find a valid placement for the portal at the corrected position
+            Vector2[] directions = new Vector2[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right, Vector2.up + Vector2.right };
+            bool validPlacementFound = false;
 
-            switch (angle)
+            foreach (Vector2 direction in directions)
             {
-                // Vertical
-                case 0:
-                    Debug.Log("Up Down");
+                if (portalScript.ValidPlacement(direction))
+                {
+                    PlacePortal(ref portal, portalPrefab, location + (Vector3)direction, rotation, true);
+                    validPlacementFound = true;
                     break;
-                case 180:
-                    Debug.Log("Up Down");
-                    break;
+                }
+            }
 
-                // Horizontal
-                case 90:
-                    var vecLeft = new Vector2(-1, 0);
-                    var vecRight = new Vector2(1, 0);
-                    if (portalScript.CheckPortalGrounded(vecLeft))
-                    {
-                        // Debug.Log("Move left");
-                        // PlacePortal(ref portal, portalPrefab, location + (Vector3)vecLeft, rotation);
-                    }
-                    else if (portalScript.CheckPortalGrounded(vecRight))
-                    {
-                        // Debug.Log("Move right");
-                        // PlacePortal(ref portal, portalPrefab, location + (Vector3)vecRight, rotation);
-                    }
-                    break;
-                case 270:
-                    break;
-                default:
-                    break;
+            if (!validPlacementFound)
+            {
+                // Debug.Log("No valid place found");
+                portal.transform.position = positionSnapshot;
+                portal.transform.rotation = rotationSnapshot;
             }
         }
     }
-
 
     public void ShootPortal(PortalColour color, Vector3 location, Quaternion rotation)
     {

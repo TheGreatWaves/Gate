@@ -117,16 +117,7 @@ public class PlayerController : MonoBehaviour
             if (UseCarryVelocity)
             {
                 _animator.SetBool("isRunning", false);
-                // If we have movement on the x-axis for our carry 
-                // velocity, we lessen the gravity for a further launch
-                // if (Mathf.Abs(CarryVelocity.x - 0.0f) > 0.01f) 
-                // {
-                //     SetGravityScale(GravityScale * 0.5f);
-                // }
-                // else 
-                // {
-                    SetGravityScale(GravityScale * FallGravityMult);
-                // }
+                SetGravityScale(GravityScale * FallGravityMult);
             }
             else 
             {
@@ -145,9 +136,10 @@ public class PlayerController : MonoBehaviour
     // Grounded
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Portal"))
+        if (other.CompareTag("Portal") && Moving())
         {
             CarryVelocity = _rb.velocity;
+            _isJumpCut = false;
         }
         else 
         {
@@ -156,13 +148,23 @@ public class PlayerController : MonoBehaviour
             IsJumping = false;
             _isJumpCut = false;
         }
-
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
         _animator.SetBool("isJumping", true);
         IsJumping = true;
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (!Moving())
+        {
+            UseCarryVelocity = false;
+            _animator.SetBool("isJumping", false);
+            IsJumping = false;
+            _isJumpCut = false;
+        }
     }
 
     private void Shoot(PortalColour portalColour)
@@ -269,5 +271,11 @@ public class PlayerController : MonoBehaviour
     {
         Shoot(PortalColour.Orange);
     }
+
+    bool Moving() 
+    {
+        return !(Mathf.Approximately(CarryVelocity.x, 0f) && Mathf.Approximately(CarryVelocity.y, 0f));
+    }
+
     #endregion    
 }

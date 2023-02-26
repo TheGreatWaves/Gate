@@ -21,11 +21,12 @@ public class Portal : MonoBehaviour
     private float _portalAngle;
     private bool _sameAngle, _oppositeAngle;
     private Direction _direction;
+    private int _groundMask;
 
     private void Start() 
     {
         spawnPoint = transform.GetChild(1);
-        
+        _groundMask = LayerMask.GetMask("Ground");
     }
 
     public void Connect(Portal other)
@@ -173,22 +174,47 @@ public class Portal : MonoBehaviour
         isRotating = false;
     }
 
-    public bool CheckPortalGrounded(Vector2 offset = default(Vector2))
+    public bool CheckPortalGrounded(Vector2 offset)
+    {
+        float rayDistance = 0.5f; // distance to cast the ray
+        Vector2 topPosition = (Vector2)transform.GetChild(2).transform.position + offset;
+        Vector2 bottomPosition = (Vector2)transform.GetChild(3).transform.position + offset;
+
+        RaycastHit2D hit1 = Physics2D.Raycast(topPosition, topPosition + (Vector2)transform.TransformDirection(Vector3.left)*0.5f, rayDistance, _groundMask);
+        RaycastHit2D hit2 = Physics2D.Raycast(bottomPosition, bottomPosition + (Vector2)transform.TransformDirection(Vector3.left)*0.5f, rayDistance, _groundMask);
+
+        var pos1 = hit1.point;
+        var pos2 = hit2.point;
+
+        return !(((int)pos1.x == 0 && (int)pos1.y == 0) || ((int)pos2.x == 0 && (int)pos2.y == 0));
+    }
+
+    public bool NotInWall(Vector2 offset)
     {
         float rayDistance = 0.1f; // distance to cast the ray
         Vector2 topPosition = (Vector2)transform.GetChild(2).transform.position + offset;
         Vector2 bottomPosition = (Vector2)transform.GetChild(3).transform.position + offset;
 
-        RaycastHit2D hit1 = Physics2D.Raycast(topPosition, transform.TransformDirection(Vector3.left), rayDistance, LayerMask.GetMask("Ground"));
-        RaycastHit2D hit2 = Physics2D.Raycast(bottomPosition, transform.TransformDirection(Vector3.left), rayDistance, LayerMask.GetMask("Ground"));
+        var vectorDirection = transform.TransformDirection(Vector3.right);
+
+        RaycastHit2D hit1 = Physics2D.Raycast(topPosition + (Vector2)vectorDirection * 0.5f, vectorDirection, rayDistance, _groundMask);
+        RaycastHit2D hit2 = Physics2D.Raycast(bottomPosition + (Vector2)vectorDirection * 0.5f, vectorDirection, rayDistance, _groundMask);
 
         var pos1 = hit1.point;
         var pos2 = hit2.point;
 
-        // Debug.Log("POSITION TOP" + topPosition);
-        // Debug.Log("POSITION BOTTOM" + bottomPosition);
+        return (((int)pos1.x == 0 && (int)pos1.y == 0) && ((int)pos2.x == 0 && (int)pos2.y == 0));
+    }
 
-        return ((int)pos1.x == 0 && (int)pos1.y == 0) || ((int)pos2.x == 0 && (int)pos2.y == 0);
+    public bool ValidPlacement(Vector2 offset)
+    {
+        var notInWall = NotInWall(offset);
+        var grounded = CheckPortalGrounded(offset);
+
+        // Debug.Log("Grounded: " + grounded);
+        // Debug.Log("Not In Wall: " + notInWall);
+
+        return notInWall && grounded;
     }
 
 }
