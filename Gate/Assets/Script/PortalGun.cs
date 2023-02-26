@@ -57,6 +57,8 @@ public class PortalGun : MonoBehaviour
         {
             return;
         }
+        
+        
 
         // if (locationOverride) Debug.Log("LOCATION OVERRIDE");
         portal.transform.position = snappedPosition;
@@ -66,6 +68,7 @@ public class PortalGun : MonoBehaviour
         if (_orangePortalScript) _orangePortalScript.CalculateDirection();
 
         var portalScript = portal.GetComponent<Portal>();
+        portalScript.CheckCanTeleport();
         if (!tryOnce && !portalScript.ValidPlacement(Vector2.zero))
         {
             // Attempt to find a valid placement for the portal at the corrected position

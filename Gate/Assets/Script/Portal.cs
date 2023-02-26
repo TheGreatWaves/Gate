@@ -23,16 +23,33 @@ public class Portal : MonoBehaviour
     private Direction _direction;
     private int _groundMask;
 
+    public bool CanTeleport { set; get; }
+
     private void Start() 
     {
         spawnPoint = transform.GetChild(1);
         _groundMask = LayerMask.GetMask("Ground");
+        CanTeleport = false;
+
+        if (linkedPortal)
+        {
+            Connect(linkedPortal);
+        }
     }
 
     public void Connect(Portal other)
     {
         linkedPortal = other;
         other.linkedPortal = this;
+
+        CheckCanTeleport();
+    }
+
+    public void CheckCanTeleport()
+    {
+        var canTeleport = !(Mathf.Approximately(linkedPortal.gameObject.transform.position.z, -100f) || (Mathf.Approximately(transform.position.z, -100f)));
+        linkedPortal.CanTeleport = canTeleport;
+        CanTeleport = canTeleport;
     }
 
     public void CalculateDirection()
@@ -40,7 +57,7 @@ public class Portal : MonoBehaviour
         _linkedAngle = linkedPortal != null ? linkedPortal.transform.eulerAngles.z : 0;
         _portalAngle = transform.eulerAngles.z;
         _sameAngle = _linkedAngle == _portalAngle;
-        _oppositeAngle = Mathf.Abs(_linkedAngle - _portalAngle) == 180;
+        _oppositeAngle = Mathf.Approximately(Mathf.Abs(_linkedAngle - _portalAngle), 180.0f);
 
         if (_sameAngle)
         {
@@ -59,11 +76,11 @@ public class Portal : MonoBehaviour
         }
         else if (_oppositeAngle)
         {
-            if (Mathf.Approximately(_portalAngle, 90) || Mathf.Approximately(_portalAngle, 270))
+            if (Mathf.Approximately(_portalAngle, 90f) || Mathf.Approximately(_portalAngle, 270f))
             {
                 _direction = Direction.SAME_VERTICAL;
             }
-            else if (Mathf.Approximately(_portalAngle, 0) || Mathf.Approximately(_portalAngle, 180))
+            else if (Mathf.Approximately(_portalAngle, 0f) || Mathf.Approximately(_portalAngle, 180f))
             {
                 _direction = Direction.SAME_HORIZONTAL;
             }
@@ -85,7 +102,7 @@ public class Portal : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (linkedPortal == null) return;
+        if (!CanTeleport || linkedPortal == null) return;
 
         if (!isTeleporting && other.gameObject.CompareTag("Player"))
         {
@@ -106,6 +123,9 @@ public class Portal : MonoBehaviour
 
                 case Direction.OPPOSITE_VERTICAL:
                     playerVelocity = new Vector2(0f, -playerVelocity.y);
+                    other.transform.Rotate(Vector3.forward, 180f);
+                    isRotating = true;
+                    StartCoroutine(RotatePlayerCoroutine(Quaternion.identity.eulerAngles, 0.5f, other.gameObject));
                     break;
 
                 case Direction.SAME_HORIZONTAL:
@@ -123,17 +143,13 @@ public class Portal : MonoBehaviour
                     break;
             }
 
-            if (_direction != Direction.OPPOSITE_HORIZONTAL 
-                && _direction != Direction.SAME_HORIZONTAL
-                && _direction != Direction.SAME_VERTICAL
-                )
+            if (_direction == Direction.OTHER)
             {
                 // Rotate the player's transform based on the rotation difference between the two portals
-                var rotationSnapshot = Quaternion.identity;
                 var eulerAngleDiff = transform.eulerAngles - linkedPortal.transform.eulerAngles;
                 other.transform.Rotate(Vector3.forward, eulerAngleDiff.z);
                 isRotating = true;
-                StartCoroutine(RotatePlayerCoroutine(rotationSnapshot.eulerAngles, 0.5f, other.gameObject));
+                StartCoroutine(RotatePlayerCoroutine(Quaternion.identity.eulerAngles, 0.5f, other.gameObject));
             }
 
 
@@ -142,6 +158,7 @@ public class Portal : MonoBehaviour
 
             other.gameObject.transform.position = linkedPortal.spawnPoint.position;
             rb.velocity = playerVelocity;
+
 
             StartCoroutine(TeleportCooldown());
         }
