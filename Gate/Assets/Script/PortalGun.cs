@@ -19,6 +19,9 @@ public class PortalGun : MonoBehaviour
     private bool _connected = false;
     public static PortalGun instance;
 
+    private void Start() {
+        Awake();
+    }
 
     void Awake()
     {

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
     private int _groundMask;
 
     public bool IsJumping { get; private set; }
+    private bool _isDead = false;
 
     [SerializeField] private Transform _gunPoint;
     [SerializeField] private GameObject _bulletTrail;
@@ -52,12 +54,16 @@ public class PlayerController : MonoBehaviour
     {
         // For debugging
         _movement = _rb.velocity;
-        if (UseCarryVelocity)
+        if (_isDead || UseCarryVelocity)
         {
             CalculateGravity();
+
+            if (_isDead && Mathf.Approximately(_rb.velocity.y, 0f))
+            {
+                _rb.bodyType = RigidbodyType2D.Static;
+            }
             return;
         }
-
 
         Run();
         FlipSprite();
@@ -136,7 +142,15 @@ public class PlayerController : MonoBehaviour
     // Grounded
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Portal") && Moving())
+        if (other.CompareTag("Lazer"))
+        {
+            Die();
+        }
+        else if (other.CompareTag("IgnoreLazer"))
+        {
+            return;
+        }
+        else if (other.CompareTag("Portal") && Moving())
         {
             CarryVelocity = _rb.velocity;
             _isJumpCut = false;
@@ -152,12 +166,15 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        if (other.CompareTag("IgnoreLazer")) return;
+        
         _animator.SetBool("isJumping", true);
         IsJumping = true;
     }
 
     private void OnTriggerStay2D(Collider2D other)
     {
+        if (other.CompareTag("IgnoreLazer")) return;
         if (!Moving())
         {
             UseCarryVelocity = false;
@@ -209,7 +226,11 @@ public class PlayerController : MonoBehaviour
             var correction = Quaternion.Euler(0, 0, 90);
 
             Quaternion portalRotation = Quaternion.FromToRotation(Vector2.up, hit.normal) * correction;
-            PortalGun.instance.ShootPortal(portalColour, portalPosition, portalRotation);
+            
+            if (!hit.collider.transform.gameObject.CompareTag("IgnoreLazer"))
+            {
+                PortalGun.instance.ShootPortal(portalColour, portalPosition, portalRotation);
+            }
             trailScript.SetTargetPosition(hit.point);
         }  
         else
@@ -233,6 +254,20 @@ public class PlayerController : MonoBehaviour
     private bool CanJumpCut()
     {
 		return IsJumping && _rb.velocity.y > 0;
+    }
+
+    bool Moving() 
+    {
+        return !(Mathf.Approximately(CarryVelocity.x, 0f) && Mathf.Approximately(CarryVelocity.y, 0f));
+    }
+
+    void Die() 
+    {
+        if (!_isDead)
+        {
+            _isDead = true;
+            _animator.SetTrigger("died");
+        }
     }
     #endregion
 
@@ -264,6 +299,7 @@ public class PlayerController : MonoBehaviour
 
     void OnFire(InputValue value)
     {
+        if (_isDead) return;
         Shoot(PortalColour.Blue);
     }
 
@@ -271,11 +307,10 @@ public class PlayerController : MonoBehaviour
     {
         Shoot(PortalColour.Orange);
     }
-
-    bool Moving() 
-    {
-        return !(Mathf.Approximately(CarryVelocity.x, 0f) && Mathf.Approximately(CarryVelocity.y, 0f));
-    }
-
     #endregion    
+
+    private void RestartLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 }
