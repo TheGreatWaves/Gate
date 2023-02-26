@@ -208,6 +208,11 @@ public class Portal : MonoBehaviour
 
     public bool ValidPlacement(Vector2 offset)
     {
+        if (transform.CheckTransformDistance(linkedPortal.transform, 1.5f))
+        {
+            return false;
+        }
+
         var notInWall = NotInWall(offset);
         var grounded = CheckPortalGrounded(offset);
 

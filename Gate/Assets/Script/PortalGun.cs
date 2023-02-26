@@ -35,7 +35,7 @@ public class PortalGun : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
+
     private void PlacePortal(ref GameObject portal, GameObject portalPrefab, Vector3 location, Quaternion rotation, bool tryOnce = false, bool locationOverride = false)
     {
         bool existingPortal = portal != null;
@@ -52,7 +52,6 @@ public class PortalGun : MonoBehaviour
         if ((_bluePortal.transform.position == snappedPosition) 
         || (_orangePortal.transform.position == snappedPosition))
         {
-            // There is already a portal at the new location, do not create a new portal
             return;
         }
 
@@ -67,7 +66,7 @@ public class PortalGun : MonoBehaviour
         if (!tryOnce && !portalScript.ValidPlacement(Vector2.zero))
         {
             // Attempt to find a valid placement for the portal at the corrected position
-            Vector2[] directions = new Vector2[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right, Vector2.up + Vector2.right };
+            Vector2[] directions = new Vector2[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right, Vector2.up + Vector2.right,  Vector2.up + Vector2.left};
             bool validPlacementFound = false;
 
             foreach (Vector2 direction in directions)

@@ -20,6 +20,18 @@ public static class VectorsExtension
         
         return rotatedVector;
     }
+
+    public static bool CheckTransformDistance(this Transform a, Transform b, float distanceThreshold)
+    {
+        return a.position.CheckVector3Distance(b.position, distanceThreshold);
+    }
+
+    public static bool CheckVector3Distance(this Vector3 a, Vector3 b, float distanceThreshold)
+    {
+        var dist = Vector3.Distance(a, b);
+        // Debug.Log(dist);
+        return dist < distanceThreshold;
+    }
 }
 
 public enum Axis 
