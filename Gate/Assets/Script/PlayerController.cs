@@ -47,7 +47,6 @@ public class PlayerController : MonoBehaviour
         UseCarryVelocity = false;
     }
 
-
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -118,17 +117,16 @@ public class PlayerController : MonoBehaviour
             if (UseCarryVelocity)
             {
                 _animator.SetBool("isRunning", false);
-
                 // If we have movement on the x-axis for our carry 
                 // velocity, we lessen the gravity for a further launch
-                if (CarryVelocity.x > 0) 
-                {
-                    SetGravityScale(GravityScale * 0.5f);
-                }
-                else 
-                {
+                // if (Mathf.Abs(CarryVelocity.x - 0.0f) > 0.01f) 
+                // {
+                //     SetGravityScale(GravityScale * 0.5f);
+                // }
+                // else 
+                // {
                     SetGravityScale(GravityScale * FallGravityMult);
-                }
+                // }
             }
             else 
             {
@@ -165,6 +163,57 @@ public class PlayerController : MonoBehaviour
     {
         _animator.SetBool("isJumping", true);
         IsJumping = true;
+    }
+
+    private void Shoot(PortalColour portalColour)
+    {
+        // Calculate the target position in world coordinates
+        Vector2 targetScreenPosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        Vector2 targetWorldPosition = targetScreenPosition - (Vector2)_gunPoint.position;
+
+        // Calculate the direction vector for the ray
+        Vector2 rayDirection = targetWorldPosition.normalized;
+
+        // Extend the ray offscreen by scaling the direction vector
+        rayDirection *= 1000f;
+
+        // Cast the ray and get the hit information
+        RaycastHit2D hit = Physics2D.Raycast(_gunPoint.position, rayDirection, Mathf.Infinity, _groundMask);
+
+        // Instantiate the bullet trail
+        GameObject trail = Instantiate(_bulletTrail, _gunPoint.position, Quaternion.identity);
+        var trailRenderer = trail.GetComponent<TrailRenderer>();
+
+        switch (portalColour)
+        {
+            case PortalColour.Blue:
+                trailRenderer.startColor = Color.blue;
+                trailRenderer.endColor  = Color.cyan;
+                break;
+            case PortalColour.Orange:
+                trailRenderer.startColor = new Color(1f, 0.5f, 0f); // orange start color
+                trailRenderer.endColor = new Color(1f, 0.8f, 0.2f); // lighter orange end color
+                break; 
+            default:
+                break;
+        }
+
+        BulletTrail trailScript = trail.GetComponent<BulletTrail>();
+
+        // Set the target position for the bullet trail
+        if (hit.collider != null)
+        {
+            Vector2 portalPosition = hit.point;
+            var correction = Quaternion.Euler(0, 0, 90);
+
+            Quaternion portalRotation = Quaternion.FromToRotation(Vector2.up, hit.normal) * correction;
+            PortalGun.instance.ShootPortal(portalColour, portalPosition, portalRotation);
+            trailScript.SetTargetPosition(hit.point);
+        }  
+        else
+        {
+            trailScript.SetTargetPosition((Vector2)_gunPoint.position + rayDirection);
+        }
     }
 
 
@@ -213,33 +262,12 @@ public class PlayerController : MonoBehaviour
 
     void OnFire(InputValue value)
     {
-        // Calculate the target position in world coordinates
-        Vector2 targetScreenPosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        Vector2 targetWorldPosition = targetScreenPosition - (Vector2)_gunPoint.position;
-
-        // Calculate the direction vector for the ray
-        Vector2 rayDirection = targetWorldPosition.normalized;
-
-        // Extend the ray offscreen by scaling the direction vector
-        rayDirection *= 1000f;
-
-        // Cast the ray and get the hit information
-        RaycastHit2D hit = Physics2D.Raycast(_gunPoint.position, rayDirection, Mathf.Infinity, _groundMask);
-
-        // Instantiate the bullet trail
-        GameObject trail = Instantiate(_bulletTrail, _gunPoint.position, Quaternion.identity);
-        BulletTrail trailScript = trail.GetComponent<BulletTrail>();
-
-        // Set the target position for the bullet trail
-        if (hit.collider != null)
-        {
-            trailScript.SetTargetPosition(hit.point);
-        }
-        else
-        {
-            trailScript.SetTargetPosition((Vector2)_gunPoint.position + rayDirection);
-        }
+        Shoot(PortalColour.Blue);
     }
 
+    void OnAlternateFire(InputValue value)
+    {
+        Shoot(PortalColour.Orange);
+    }
     #endregion    
 }
