@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool CanUsePortal { get; set; }
+
     public float MoveSpeed = 10f;
     public float MoveSpeedMultiplier = 10f;
     private Vector2 _moveInput;
@@ -42,6 +45,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        CanUsePortal = true;
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
@@ -88,6 +92,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void TogglePortal()
+    {
+        CanUsePortal = true;
+    }
+
+    public void TogglePortalOff()
+    {
+        CanUsePortal = false;
+    }
 
     void Jump()
     {
@@ -146,7 +159,7 @@ public class PlayerController : MonoBehaviour
         {
             Die();
         }
-        else if (other.CompareTag("IgnoreLazer"))
+        else if (other.CompareTag("IgnoreLazer") || other.CompareTag("Untagged"))
         {
             return;
         }
@@ -166,7 +179,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("IgnoreLazer")) return;
+        if (other.CompareTag("IgnoreLazer") || other.CompareTag("Untagged")) return;
         
         _animator.SetBool("isJumping", true);
         IsJumping = true;
@@ -175,7 +188,8 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.CompareTag("IgnoreLazer")) return;
-        if (!Moving())
+        
+        if (IsGrounded())
         {
             UseCarryVelocity = false;
             _animator.SetBool("isJumping", false);
@@ -269,6 +283,12 @@ public class PlayerController : MonoBehaviour
             _animator.SetTrigger("died");
         }
     }
+
+    bool IsGrounded()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.9f, LayerMask.GetMask("Ground"));
+        return hit.collider != null;
+    }
     #endregion
 
     #region RECEIVED MESAGGES
@@ -299,12 +319,13 @@ public class PlayerController : MonoBehaviour
 
     void OnFire(InputValue value)
     {
-        if (_isDead) return;
+        if (_isDead || !CanUsePortal) return;
         Shoot(PortalColour.Blue);
     }
 
     void OnAlternateFire(InputValue value)
     {
+        if (_isDead || !CanUsePortal) return;
         Shoot(PortalColour.Orange);
     }
     #endregion    
