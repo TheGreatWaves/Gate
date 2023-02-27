@@ -611,6 +611,51 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b82468c3348050749a22bcf811aa1b80, type: 3}
+--- !u!1 &427556413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 427556415}
+  - component: {fileID: 427556414}
+  m_Layer: 0
+  m_Name: Level2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &427556414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427556413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed0e5b8568e6b7c428ccb3fad98f0f63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pc: {fileID: 1467073210}
+--- !u!4 &427556415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427556413}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.2946205, y: 12.523884, z: 0.8458943}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 24
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &498834579
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19345,7 +19390,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15.000001
+      m_AnimationSpeed: 15
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -23, y: 15, z: 0}
@@ -19399,7 +19444,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15.000001
+      m_AnimationSpeed: 15
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -30, y: 19, z: 0}
@@ -19444,7 +19489,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15.000001
+      m_AnimationSpeed: 15
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: 26, y: 20, z: 0}
@@ -19480,7 +19525,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15.000001
+      m_AnimationSpeed: 15
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -31, y: 27, z: 0}
@@ -19516,7 +19561,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15
+      m_AnimationSpeed: 15.000001
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -27, y: 27, z: 0}
@@ -19534,7 +19579,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15.000001
+      m_AnimationSpeed: 15
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -25, y: 27, z: 0}
@@ -19588,7 +19633,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15.000001
+      m_AnimationSpeed: 15
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -19, y: 27, z: 0}
@@ -19606,7 +19651,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15.000001
+      m_AnimationSpeed: 15
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -17, y: 27, z: 0}
@@ -19642,7 +19687,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15
+      m_AnimationSpeed: 15.000001
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -13, y: 27, z: 0}
@@ -19973,9 +20018,37 @@ PrefabInstance:
       propertyPath: _interactable
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4204832707701478960, guid: f9dc8be72ad3a5440ba40c0cb351cc39, type: 3}
+      propertyPath: onTriggerAction.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4204832707701478960, guid: f9dc8be72ad3a5440ba40c0cb351cc39, type: 3}
+      propertyPath: onTriggerAction.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4204832707701478960, guid: f9dc8be72ad3a5440ba40c0cb351cc39, type: 3}
+      propertyPath: onTriggerAction.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 427556414}
+    - target: {fileID: 4204832707701478960, guid: f9dc8be72ad3a5440ba40c0cb351cc39, type: 3}
+      propertyPath: onTriggerAction.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4204832707701478960, guid: f9dc8be72ad3a5440ba40c0cb351cc39, type: 3}
+      propertyPath: onTriggerAction.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: NextScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 4204832707701478960, guid: f9dc8be72ad3a5440ba40c0cb351cc39, type: 3}
+      propertyPath: onTriggerAction.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Level2, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4204832707701478960, guid: f9dc8be72ad3a5440ba40c0cb351cc39, type: 3}
+      propertyPath: onTriggerAction.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4204832707701478961, guid: f9dc8be72ad3a5440ba40c0cb351cc39, type: 3}
       propertyPath: m_Name
-      value: TextTrigger (3)
+      value: EndingTrigger
       objectReference: {fileID: 0}
     - target: {fileID: 4204832707701478966, guid: f9dc8be72ad3a5440ba40c0cb351cc39, type: 3}
       propertyPath: m_RootOrder
@@ -20241,6 +20314,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4257528408748250041, guid: b82468c3348050749a22bcf811aa1b80, type: 3}
   m_PrefabInstance: {fileID: 256913310}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1467073210 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4257528408748250044, guid: b82468c3348050749a22bcf811aa1b80, type: 3}
+  m_PrefabInstance: {fileID: 256913310}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ec38431d11298c4783aa7b16c0f93cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1513804672
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21136,7 +21220,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15.000001
+      m_AnimationSpeed: 15
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -11, y: 19, z: 0}
@@ -21172,7 +21256,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15
+      m_AnimationSpeed: 15.000001
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   - first: {x: -11, y: 21, z: 0}
@@ -21289,7 +21373,7 @@ Tilemap:
       - {fileID: 66191116, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: -1658985732, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
       - {fileID: 574464212, guid: 0c8864c6159036f479e6b4c488a95d89, type: 3}
-      m_AnimationSpeed: 15.000001
+      m_AnimationSpeed: 15
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   m_TileAssetArray:
@@ -34787,7 +34871,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2920899483622154064, guid: c40787e0062934b44a38446b937c1719, type: 3}
       propertyPath: m_AnimatedTiles.Array.data[10].second.m_AnimationSpeed
-      value: 15.000001
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 2920899483622154064, guid: c40787e0062934b44a38446b937c1719, type: 3}
       propertyPath: m_AnimatedTiles.Array.data[11].second.m_AnimationSpeed
@@ -34827,7 +34911,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2920899483622154064, guid: c40787e0062934b44a38446b937c1719, type: 3}
       propertyPath: m_AnimatedTiles.Array.data[20].second.m_AnimationSpeed
-      value: 15.000001
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 2920899483622154064, guid: c40787e0062934b44a38446b937c1719, type: 3}
       propertyPath: m_AnimatedTiles.Array.data[21].second.m_AnimationSpeed

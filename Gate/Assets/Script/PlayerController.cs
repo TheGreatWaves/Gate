@@ -45,7 +45,6 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CanUsePortal = true;
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
@@ -188,7 +187,7 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.CompareTag("IgnoreLazer")) return;
-        
+
         if (IsGrounded())
         {
             UseCarryVelocity = false;
